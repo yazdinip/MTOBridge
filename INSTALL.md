@@ -1,24 +1,48 @@
-Instructions for installing your software.  You should also include uninstall
-instructions.
+# Installation
 
-cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE -DCMAKE_MODULE_PATH="F:/Qt/6.4.0/mingw_64/lib/cmake" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DQT_DEBUG_FIND_PACKAGE=ON -Sf:/MTOBridge -Bf:/MTOBridge/build -G Ninja
+## Requirements
+- Windows 10/11
+- CMake 3.16+
+- C++20 toolchain (MSVC 2019+ recommended for Qt 6)
+- Qt 6.4+ (Core, Widgets, Charts, Test)
+- MATLAB R2022b (or compatible) with MATLAB C++ Shared Library support
 
+## Configure and Build
+MTOBridge uses CMake. The build expects a Qt install root and a MATLAB root.
 
+```powershell
+cmake -S . -B build -DQT_PATH="C:/Qt/6.4.2/msvc2019_64/" -DMatlab_ROOT_DIR="C:/Program Files/Matlab/R2022b"
+cmake --build build --config Release
+```
 
+Notes:
+- The build copies `src/matlab/mtobridge_matlab.ctf` to the output directory.
+- `windeployqt` runs after build to stage Qt runtime dependencies.
+- The build scripts are currently Windows-focused; other platforms will require
+  path and deployment adjustments.
 
+## Run
+Launch the generated `MTOBridge.exe` from the build output directory. Ensure the
+MATLAB runtime components and `mtobridge_matlab.ctf` are available next to the
+executable.
 
-set(CMAKE_PREFIX_PATH="F:/Qt/6.4.0/mingw_64/lib/cmake)
+## Clean Build
+If you need a clean build, delete the build directory and reconfigure:
 
-install(TARGETS engine gui ARCHIVE DESTINATION lib)
-install(TARGETS MTOBridge RUNTIME DESTINATION bin)
+```powershell
+Remove-Item -Recurse -Force build
+cmake -S . -B build -DQT_PATH="C:/Qt/6.4.2/msvc2019_64/" -DMatlab_ROOT_DIR="C:/Program Files/Matlab/R2022b"
+```
 
-include(InstallRequiredSystemLibraries)
-set(CPACK_PACKAGE_NAME "MTOBridge")
-set(CPACK_PACKAGE_VERSION "1.0.0")
-set(CPACK_PACKAGE_VERSION_MAJOR 1)
-set(CPACK_PACKAGE_VERSION_MINOR 0)
-set(CPACK_PACKAGE_VERSION_PATCH "0")
-set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE)
-set(CPACK_GENERATOR "ZIP")
+## Tests
+Tests are enabled by default; you can disable them with `-DMTOBRIDGE_BUILD_TESTS=OFF`.
 
-include(CPack)
+```powershell
+cmake -S . -B build -DMTOBRIDGE_BUILD_TESTS=ON
+cmake --build build --config Debug
+ctest --test-dir build --output-on-failure
+```
+
+## Uninstall
+There is no installer yet. To remove the application, delete the build output
+directory and any exported files you created (reports, charts, configs).

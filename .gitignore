@@ -289,6 +289,26 @@ src/.vs/*
 # Exclude matlab files
 *.ctf
 
-src/fileio/CMakeLists.txt.user
-src/fileio/CMakeLists.txt
 *.brg
+
+# CMake artifacts
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+Testing/
+compile_commands.json
+
+# Additional build output
+build-*/
+cmake-build*/
+out/
+
+# IDE and editor artifacts
+*.user
+*.user.*
+*.pro.user*
+*.qmlc
+*.creator
+*.files
+*.includes

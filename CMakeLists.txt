@@ -15,9 +15,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 #    -checks="clang-diagnostic-*,clang-analyzer-*,modernize-*,-modernize-use-trailing-return-type,readability-*,-readability-magic-numbers,concurrency-*";
 #    -header-filter="./src/.*"
 #)
-set(QT_PATH "C:/Qt/6.4.2/msvc2019_64/")
-set(CMAKE_PREFIX_PATH ${QT_PATH})
-set(CMAKE_PREFIX_PATH "${QT_PATH}lib/cmake")
+set(QT_PATH "C:/Qt/6.4.2/msvc2019_64/" CACHE PATH "Qt installation root")
+list(APPEND CMAKE_PREFIX_PATH "${QT_PATH}" "${QT_PATH}/lib/cmake")
 
 find_package(Qt6 REQUIRED COMPONENTS 
     Core
@@ -26,7 +25,7 @@ find_package(Qt6 REQUIRED COMPONENTS
     Test
 )
 
-set(Matlab_ROOT_DIR "C:/Program Files/Matlab/R2022b")
+set(Matlab_ROOT_DIR "C:/Program Files/Matlab/R2022b" CACHE PATH "MATLAB installation root")
 include_directories(engine
    ${Matlab_ROOT_DIR}/extern/include/
 )
@@ -45,8 +44,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY
 
 add_subdirectory(src)
 
-enable_testing(true)
-add_subdirectory(test)
+option(MTOBRIDGE_BUILD_TESTS "Build MTOBridge tests" ON)
+if(MTOBRIDGE_BUILD_TESTS)
+  enable_testing(true)
+  add_subdirectory(tests)
+endif()
 
 set_property(
 TARGET MTOBridge PROPERTY 
